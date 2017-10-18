@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-let template = fs.readFileSync(path.resolve('./index.html'), 'utf-8');
+let template = fs.readFileSync(path.resolve('index.html'), 'utf-8');
 app.get('/', function(req, res) {
   res.send(template);
 });
@@ -41,8 +41,9 @@ app.get('/offline_api', function(req, res) {
 });
 
 app.listen(process.env.PORT, function () {
+  // app.keepAliveTimeout = 0;
   console.log(`Example app listening on port ${process.env.PORT}!`);
-  if (process.env.NODE_ENV === 'development') {
-    require('open')(`http://localhost:${process.env.PORT}`);
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   require('open')(`http://localhost:${process.env.PORT}`);
+  // }
 });

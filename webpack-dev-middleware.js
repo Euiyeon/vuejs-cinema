@@ -1,3 +1,4 @@
+// https://github.com/webpack/webpack-dev-middleware
 const webpackDevMiddleware = require("webpack-dev-middleware");
 const webpack = require("webpack");
 const webpackConfig = require('./webpack.config');
@@ -18,7 +19,8 @@ module.exports = {
     app.use(require("webpack-hot-middleware")(compiler, {
       log: console.log,
       path: '/__webpack_hmr',
-      heartbeat: 10 * 1000,
+      // heartbeat: 10 * 1000,
+      heartbeat: 2000,
     }));
   }
 };

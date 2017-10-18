@@ -2,15 +2,16 @@ require('dotenv').config();
 
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: [
-    './src/main.js'
-  ],
+  entry: {
+    app: ['./src/main.js']
+  },
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: 'build.js'
+    filename: '[name].js'
   },
   module: {
     rules: [
@@ -42,7 +43,11 @@ module.exports = {
             'js': 'babel-loader?presets[]=env'
           }
         }
-      }
+      },
+      // {
+      //   test: /\.html$/,
+      //   loader: "raw-loader" // loaders: ['raw-loader'] is also perfectly acceptable.
+      // }
     ]
   },
   resolve: {
@@ -52,12 +57,27 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: true
+    // contentBase: './dist',
+    noInfo: true,
+    // hot: true,
   },
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: '#eval-source-map',
+  plugins: [
+    // https://github.com/jantimon/html-webpack-plugin
+    // new HtmlWebpackPlugin({
+    //   filename: 'index.html',
+    //   template: './src/index.html',
+    // }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jquery: 'jquery',
+      'window.jQuery': 'jquery',
+      jQuery: 'jquery'
+    })
+  ]
 };
 
 if (process.env.NODE_ENV === 'development') {
@@ -66,8 +86,14 @@ if (process.env.NODE_ENV === 'development') {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   ];
-  module.exports.entry.push('webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'); //?noInfo=true&quiet=true)
-  module.exports.module.rules[0].use.push({ loader: 'webpack-module-hot-accept' });
+  module.exports.entry.app.push(
+    'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'
+  ); //?noInfo=true&quiet=true)
+  module.exports.module.rules[0].use.push(
+    { 
+      loader: 'webpack-module-hot-accept' 
+    }
+  );
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -87,6 +113,6 @@ if (process.env.NODE_ENV === 'production') {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
-    })
+    }),
   ])
 }
